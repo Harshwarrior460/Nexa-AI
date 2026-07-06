@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexa AI Chatbot</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: #0f172a; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .chat-container { width: 100%; max-width: 450px; height: 85vh; background: #1e293b; border-radius: 16px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #334155; }
+        .chat-header { background: #2563eb; color: #ffffff; padding: 18px; text-align: center; font-weight: bold; font-size: 1.3rem; letter-spacing: 0.5px; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .message { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; }
+        .message.user { background: #2563eb; color: #ffffff; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .message.bot { background: #334155; color: #f8fafc; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .chat-input-area { display: flex; padding: 15px; background: #1e293b; border-top: 1px solid #334155; }
+        #message-input { flex: 1; padding: 12px; background: #0f172a; border: 1px solid #475569; color: #f8fafc; border-radius: 25px; outline: none; font-size: 0.95rem; padding-left: 18px; }
+        #send-btn { background: #2563eb; color: white; border: none; padding: 0 20px; margin-left: 10px; border-radius: 25px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">Nexa AI</div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot">Hello! I am Nexa. Test my knowledge on countries, sports, science, or programming!</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="message-input" placeholder="Ask Nexa anything..." autocomplete="off">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        // Massive knowledge library for standard questions
+        const knowledgeBase = {
+            "fifa": "FIFA stands for the Fédération Internationale de Football Association. It's the global governing body for soccer and organizes the World Cup every 4 years!",
+            "india": "India is a major democratic country in South Asia. Its capital is New Delhi, it uses the Indian Rupee (INR), and it is famous for its rich history, culture, and tech innovation.",
+            "pm of india": "The Prime Minister of India is Narendra Modi.",
+            "president of india": "The President of India is Droupadi Murmu.",
+            "america": "The United States of America (USA) is a country spanning North America. Its capital is Washington, D.C., and its currency is the US Dollar ($).",
+            "china": "China is an East Asian nation with a massive population, known for the Great Wall and its global manufacturing hub. The capital is Beijing.",
+            "football": "Football (or soccer) is the world's most popular sport, played between two teams of 11 players using a spherical ball.",
+            "cricket": "Cricket is a massive bat-and-ball game played between two teams of 11. It's wildly popular in India, Australia, the UK, and Pakistan.",
+            "html": "HTML stands for HyperText Markup Language. It forms the standard structure of web pages everywhere.",
+            "javascript": "JavaScript (JS) is a high-level programming language used to make web elements interactive, just like this chat box logic!",
+            "css": "CSS stands for Cascading Style Sheets. It controls the fonts, layouts, colors, and overall design presentation of a website.",
+            "python": "Python is an incredibly popular, clean programming language used for data science, AI development, and general scripting.",
+            "ai": "Artificial Intelligence (AI) refers to computer software designed to simulate human intellect by learning, reasoning, and problem-solving.",
+            "earth": "Earth is the third planet from the Sun and the only known astronomical object supporting liquid water and human life.",
+            "sun": "The Sun is the star at the center of our Solar System. It provides light, heat, and gravity that holds our solar system together.",
+            "moon": "The Moon is Earth's only natural satellite, responsible for driving oceanic tides across the globe."
+        };
+
+        function appendMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            messageDiv.innerText = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function calculateResponse(userText) {
+            const text = userText.toLowerCase().trim();
+
+            if (text.includes("hi") || text.includes("hello")) {
+                return "Hey! I am Nexa, your interactive smart assistant. Try asking me about 'FIFA', 'India', 'JavaScript', or 'AI'!";
+            }
+            if (text.includes("how are you")) {
+                return "Systems operating at 100%! Ready to process your commands.";
+            }
+            if (text.includes("name")) {
+                return "My name is Nexa! I am an optimized virtual assistant platform.";
+            }
+
+            // Loop through our massive dictionary to match phrases dynamically
+            for (let key in knowledgeBase) {
+                if (text.includes(key)) {
+                    return knowledgeBase[key];
+                }
+            }
+
+            // Smart contextual fallback responses
+            const smartFallbacks = [
+                "That's complex! My cloud interface data module safely catalogs that inquiry.",
+                "Processing data structure... That is an excellent topic for extended system expansion.",
+                "Analyzing query. Nexa core components confirm successful information routing loops."
+            ];
+            return smartFallbacks[Math.floor(Math.random() * smartFallbacks.length)];
+        }
+
+        function handleSendMessage() {
+            const userText = messageInput.value.trim();
+            if (userText === "") return;
+
+            appendMessage(userText, 'user');
+            messageInput.value = "";
+
+            const typingDiv = document.createElement('div');
+            typingDiv.classList.add('message', 'bot');
+            typingDiv.innerText = "Nexa is thinking...";
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            setTimeout(() => {
+                chatMessages.removeChild(typingDiv);
+                const aiReply = calculateResponse(userText);
+                appendMessage(aiReply, 'bot');
+            }, 500);
+        }
+
+        sendBtn.addEventListener('click', handleSendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSendMessage();
+        });
+    </script>
+</body>
+</html>
