@@ -32,7 +32,7 @@
     </div>
 
     <script>
-        // 1. PLACE YOUR REAL GEMINI API KEY HERE BEFORE DEPLOYING
+        // Make sure your full AQ... key is pasted here inside the quotes
         const GEMINI_API_KEY = "AQ.Ab8RN6JdenRxXFI9mfj5P11MDgWzTg28jR1WWTd89bQNY71Cqw";
 
         const chatMessages = document.getElementById('chat-messages');
@@ -55,33 +55,38 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
-                // Official Google Gemini API Endpoint setup
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                // Using the unified API URL format
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{
-                            parts: [{ text: `Your name is Nexa. You are a helpful, smart AI assistant. Answer clearly and briefly. User inquiry: ${userText}` }]
-                        }]
+                            parts: [{ text: userText }]
+                        }],
+                        systemInstruction: {
+                            parts: [{ text: "Your name is Nexa. You are a helpful, smart AI assistant. Answer clearly and briefly." }]
+                        }
                     })
                 });
 
                 const data = await response.json();
                 chatMessages.removeChild(typingDiv);
                 
-                // Read the output structure coming from Google's backend
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                // Safer structural checking for the API response payload
+                if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
                     return data.candidates[0].content.parts[0].text;
+                } else if (data && data.error) {
+                    return "API Error: " + data.error.message;
                 } else {
-                    return "Error: Received unexpected formatting from Gemini servers.";
+                    return "Error: Could not parse response layout.";
                 }
 
             } catch (error) {
                 chatMessages.removeChild(typingDiv);
                 console.error("API Error:", error);
-                return "Error: Could not process request. Please make sure your API key is correctly inserted.";
+                return "Error: Request failed. Please check your network connection.";
             }
         }
 
@@ -101,5 +106,6 @@
             if (e.key === 'Enter') handleSendMessage();
         });
     </script>
+                
 </body>
 </html>
