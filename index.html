@@ -1,4 +1,4 @@
-                <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -32,8 +32,8 @@
     </div>
 
     <script>
-        // Make sure your full AQ... key is pasted here inside the quotes
-        const GEMINI_API_KEY = "AQ.Ab8RN6JdenRxXFI9mfj5P11MDgWzTg28jR1WWTd89bQNY71Cqw";
+        // PUT YOUR COPIED AQ... KEY INSIDE THESE QUOTES
+        const GEMINI_API_KEY = "PASTE_YOUR_FULL_KEY_HERE";
 
         const chatMessages = document.getElementById('chat-messages');
         const messageInput = document.getElementById('message-input');
@@ -55,26 +55,22 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
-                // Using the unified API URL format
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                // Correctly configured endpoint for your specific API key format
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
                 
                 const response = await fetch(url, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{
-                            parts: [{ text: userText }]
-                        }],
-                        systemInstruction: {
-                            parts: [{ text: "Your name is Nexa. You are a helpful, smart AI assistant. Answer clearly and briefly." }]
-                        }
+                            parts: [{ text: `Your name is Nexa. You are a helpful AI assistant. Answer clearly and briefly. User: ${userText}` }]
+                        }]
                     })
                 });
 
                 const data = await response.json();
                 chatMessages.removeChild(typingDiv);
                 
-                // Safer structural checking for the API response payload
                 if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
                     return data.candidates[0].content.parts[0].text;
                 } else if (data && data.error) {
@@ -106,6 +102,5 @@
             if (e.key === 'Enter') handleSendMessage();
         });
     </script>
-                
 </body>
 </html>
